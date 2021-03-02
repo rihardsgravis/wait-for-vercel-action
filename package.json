@@ -1,6 +1,6 @@
 {
   "name": "wait-for-vercel-action",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Wait for Vercel deployment to complete for a commit.",
   "repository": {
     "type": "git",

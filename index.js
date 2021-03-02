@@ -42,9 +42,15 @@ function getUrl(sha) {
 }
 
 async function waitForDeployment() {
-  const sha =
-    github.context.payload.head_commit?.id ||
-    github.context.payload.pull_request?.head.sha
+  let sha = undefined
+
+  if (typeof github.context.payload.head_commit === "object") {
+    sha = github.context.payload.head_commit.id
+  }
+
+  if (typeof github.context.payload.pull_request === "object") {
+    sha = github.context.payload.pull_request.head.sha
+  }
 
   if (!sha) {
     throw new Error(
