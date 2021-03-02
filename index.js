@@ -25,7 +25,9 @@ async function getProdUrl(sha) {
 
 async function getBranchUrl(sha) {
   const teamId = core.getInput("team-id")
-  const url = `https://api.vercel.com/v5/now/deployments?${teamId ? `teamId=${teamId}&` : ""}meta-githubCommitSha=${sha}`
+  const url = `https://api.vercel.com/v5/now/deployments?${
+    teamId ? `teamId=${teamId}&` : ""
+  }meta-githubCommitSha=${sha}`
   const { data } = await axios.get(url, headers)
 
   // If the deployment isn't in the response, this will throw an error and
@@ -40,7 +42,16 @@ function getUrl(sha) {
 }
 
 async function waitForDeployment() {
-  const sha = github.context.payload.head_commit.id
+  const sha =
+    github.context.payload.head_commit?.id ||
+    github.context.payload.pull_request?.head.sha
+
+  if (!sha) {
+    throw new Error(
+      "Action supports only `push` and `pull_request` webhook events"
+    )
+  }
+
   const timeout = +core.getInput("timeout") * 1000
   const endTime = new Date().getTime() + timeout
 
